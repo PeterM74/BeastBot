@@ -8,8 +8,6 @@ import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import WordNetLemmatizer #,PorterStemmer
 # from nltk.stem.snowball import SnowballStemmer
-# from Helpers import LoadData
-# from Helpers import HelperFunctions
 exec(open("Helpers/LoadData.py", encoding="utf8").read())
 exec(open("Helpers/HelperFunctions.py", encoding="utf8").read())
 
