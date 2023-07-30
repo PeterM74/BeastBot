@@ -7,9 +7,12 @@ from discord.ext import commands
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import WordNetLemmatizer #,PorterStemmer
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 # from nltk.stem.snowball import SnowballStemmer
 exec(open("Helpers/LoadData.py", encoding="utf8").read())
 exec(open("Helpers/HelperFunctions.py", encoding="utf8").read())
+
+fLoadData()
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 
