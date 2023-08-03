@@ -67,5 +67,13 @@ async def on_message(message):
                         Mode="Image",
                         Output=Response['Output'])
 
+@bot.event
+async def on_raw_reaction_add(payload):
+    MessageReceived = await bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+    if MessageReceived.author == bot.user:
+        return
+
+    await MessageReceived.add_reaction(payload.emoji)
+
 
 bot.run(Token.BotToken)
