@@ -1,3 +1,6 @@
+import pandas as pd
+
 def fLoadData():
-    global MotivationFileKey
     MotivationFileKey = pd.read_csv(r'Data/MotivationImages.csv')
+
+    return MotivationFileKey

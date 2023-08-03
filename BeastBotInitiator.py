@@ -1,18 +1,8 @@
 import Token
-import random
 import discord
-import pandas as pd
 from discord import app_commands
 from discord.ext import commands
-import nltk
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.stem import WordNetLemmatizer #,PorterStemmer
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-# from nltk.stem.snowball import SnowballStemmer
-exec(open("Helpers/LoadData.py", encoding="utf8").read())
-exec(open("Helpers/HelperFunctions.py", encoding="utf8").read())
-
-fLoadData()
+from Helpers.HelperFunctions import *
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 
@@ -20,8 +10,9 @@ bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
     try:
-        SyncSlashCommands = await bot.tree.sync()
-        print(f"Synced {len(SyncSlashCommands)} commands")
+        # SyncSlashCommands = await bot.tree.sync()
+        # print(f"Synced {len(SyncSlashCommands)} commands")
+        print("Beasty is ready for action")
     except Exception as e:
         print(f"Error syncing commands: {e}")
 

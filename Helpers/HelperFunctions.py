@@ -1,3 +1,17 @@
+import Token
+import random
+import discord
+import pandas as pd
+from discord import app_commands
+from discord.ext import commands
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem import WordNetLemmatizer #,PorterStemmer
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from Helpers.LoadData import *
+
+MotivationFileKey = fLoadData()
+
 ##### Plain text message parser
 def fLoadMessageResponse(RawMessage):
 
@@ -224,9 +238,10 @@ def fHelp():
     return ReturnString
 
 def fLordsPrayer():
-    ReturnString = "Swoll Jesus, who lifts in heaven.\n Hallowed be thy gains, to thy gym they come, " +
+    # Thanks to Monstre for the wording
+    ReturnString = ("Swoll Jesus, who lifts in heaven.\n Hallowed be thy gains, to thy gym they come, " +
     "thy PBs be won, on Earth as it is in Heaven.\n Give us our daily Protein, and forgive those who " +
-    "interrupt a set between us. And lead us not into temptation of false gains, or steroid injections.\n\n*Amen*"
+    "interrupt a set between us. And lead us not into temptation of false gains, or steroid injections.\n\n*Amen*")
 
     return ReturnString
 
