@@ -103,10 +103,10 @@ def fLoadMessageResponse(RawMessage):
 def fBeastBotGenericResponse(Polarity):
     PositiveRemarks = ["Damn, now that's a man right there",
                        "You are my favourite human - you can spot me any day",
-                       "I was talking to my other bot friends and we all agreed that you getting swole AF"]
+                       "I was talking to my other bot friends and we all agreed that you are getting swole AF"]
 
     NegativeRemarks = ["I could crush you where you stand",
-                       "I finished hacking into your photos to post online and make fun of you but what I saw was so pathetic I just couldn't do it",
+                       "I finished hacking into your photos so I could post them online and make fun of you but what I saw was so pathetic ... I just couldn't do it",
                        "You're a fucking twig that I could break between my RAM sticks"]
 
     if (Polarity == "Positive"):
@@ -239,8 +239,8 @@ def fHelp():
 
 def fLordsPrayer():
     # Thanks to Monstre for the wording
-    ReturnString = ("Swoll Jesus, who lifts in heaven.\n Hallowed be thy gains, to thy gym they come, " +
-    "thy PBs be won, on Earth as it is in Heaven.\n Give us our daily Protein, and forgive those who " +
+    ReturnString = ("Swoll Jesus, who lifts in heaven.\nHallowed be thy gains, to thy gym they come, " +
+    "thy PBs be won, on Earth as it is in Heaven.\nGive us our daily Protein, and forgive those who " +
     "interrupt a set between us. And lead us not into temptation of false gains, or steroid injections.\n\n*Amen*")
 
     return ReturnString

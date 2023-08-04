@@ -1,5 +1,5 @@
-# BeastBot
-![](https://img.shields.io/badge/version-1.0-green)
+# BeastBot <img src="Data/BeastBotNoBG.png" align="right" height="150" width="150"/>
+![](https://img.shields.io/badge/version-1.0.1-green)
 
 BeastBot is a [Discord](https://discord.com/) bot for our gym group. He has a range of functions, including:
 
