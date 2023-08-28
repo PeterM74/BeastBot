@@ -1,6 +1,7 @@
-import Token
+import Settings
 import random
 import discord
+import requests
 import pandas as pd
 from discord import app_commands
 from discord.ext import commands
@@ -13,7 +14,7 @@ from Helpers.LoadData import *
 MotivationFileKey = fLoadData()
 
 ##### Plain text message parser
-def fLoadMessageResponse(RawMessage):
+def fLoadMessageResponse(RawMessage, MessageAuthorName):
 
     # Full message
     ## TODO: optimise by generating off sentence breakdown from below
@@ -62,43 +63,55 @@ def fLoadMessageResponse(RawMessage):
 
         return Output_dict
 
-    if (('lord' in ResponseNLP['MessageLemma']) & ('prayer' in ResponseNLP['MessageLemma'])):
+    if ((('lord' in ResponseNLP['MessageLemma']) or ('swole' in ResponseNLP['MessageLemma'])) &
+            ('prayer' in ResponseNLP['MessageLemma'])):
         Output_dict = {}
         Output_dict["MessageType"] = "text"
         Output_dict["Output"] = fLordsPrayer()
 
         return Output_dict
 
-    ## Sentiment analysis
-    ### Using pre-trained vader for now - not perfect for gym slang
-    sentiment = SentimentIntensityAnalyzer()
-    SentimentPolarity = sentiment.polarity_scores(RawMessage)
-    SentimentPolScore = SentimentPolarity['compound']
-
-    if (SentimentPolScore > 0.2):
-
-        # Output result
+    if (Settings.UseInworldAIChatbot):
+        # Consider making async request? Or not an issue as discord.py uses async already?
         Output_dict = {}
         Output_dict["MessageType"] = "text"
-        Output_dict["Output"] = fBeastBotGenericResponse("Positive")
+        Output_dict["Output"] = fSendPOST(MessageInput=RawMessage,
+                                          Author=MessageAuthorName,
+                                          SessionID=CurrentSessionID)
 
         return Output_dict
 
-    elif (SentimentPolScore < -0.2):
-        # Output result
+    else:
+        ## Sentiment analysis
+        ### Using pre-trained vader for now - not perfect for gym slang
+        sentiment = SentimentIntensityAnalyzer()
+        SentimentPolarity = sentiment.polarity_scores(RawMessage)
+        SentimentPolScore = SentimentPolarity['compound']
+
+        if (SentimentPolScore > 0.2):
+
+            # Output result
+            Output_dict = {}
+            Output_dict["MessageType"] = "text"
+            Output_dict["Output"] = fBeastBotGenericResponse("Positive")
+
+            return Output_dict
+
+        elif (SentimentPolScore < -0.2):
+            # Output result
+            Output_dict = {}
+            Output_dict["MessageType"] = "text"
+            Output_dict["Output"] = fBeastBotGenericResponse("Negative")
+
+            return Output_dict
+
+
+        ## No match found, return nothing
         Output_dict = {}
-        Output_dict["MessageType"] = "text"
-        Output_dict["Output"] = fBeastBotGenericResponse("Negative")
+        Output_dict["MessageType"] = "NoInteraction"
+        Output_dict["Output"] = ''
 
         return Output_dict
-
-
-    ## No match found, return nothing
-    Output_dict = {}
-    Output_dict["MessageType"] = "NoInteraction"
-    Output_dict["Output"] = ''
-
-    return Output_dict
 
 def fBeastBotGenericResponse(Polarity):
     PositiveRemarks = ["Damn, now that's a man right there",
@@ -225,7 +238,7 @@ def fHelp():
     "\U0001F4AA **Choose a random workout**. Give me exclusions^ and I will take them into consideration.\n" +
     "    - Example: Hey BB, choose a workout for me and exclude legs, shoulder and chest.\n\n" +
     "\U0001F4AA  **Send a motivational post**. You can ask for a specific type^.\n" +
-    "    - Example: Hey Beasty, I need motivation. It's for chest day.\n\n" +
+    "    - Example: Hey Beasty, I need motivation. It's for chest day (WIP).\n\n" +
     "\U0001F4AA  **Recite the swole prayer**. You can ask for a recitation of the swole prayer.\n" +
     "    - Example: Hey Beasty, I would like to receive the swole prayer.\n" +
     "\n" +
@@ -250,6 +263,7 @@ def fLordsPrayer():
 # BeastBot nicknames
 def fBBNicknames():
     return ['beastbot', 'bb', 'beasty', 'bbot']
+
 # Detect if BeastBot name is used in message
 def fAddressesBeastBot(RawMessage):
     # TODO: Below is duplicated in fLoadMessageResponse()
@@ -262,3 +276,31 @@ def fAddressesBeastBot(RawMessage):
 def fWriteToLog(AuthorID, AuthorName, Input = "", Mode = "", Output = ""):
     with open("Logfile.txt", "a+", encoding="utf-8") as f:
         f.write(str(AuthorID + " - " + AuthorName + " - Mode: " + Mode + " - Input: " + Input + " - Output: " + Output + "\n"))
+
+# Send POST Request to InWorld API
+def fSendPOST(MessageInput, Author, SessionID):
+
+    JSONPackage = {"character":Settings.IW_WORKSPACE,
+                   "sessionId": SessionID,
+                   "text":MessageInput,
+                   "endUserFullname":Author,
+                   "endUserId":"12345"}  # Keep same environment
+
+    if (SessionID == ''):
+        del JSONPackage['sessionId']
+
+    Output = requests.post(Settings.IW_APIURL,
+                           json=JSONPackage,
+                           headers={"Content-Type": "application/json",
+                                    "authorization": Settings.IW_APIKEYAuth})
+
+    JSONOutput = Output.json()
+
+    # Output text
+    TextResponse = ''.join(JSONOutput['textList'])
+
+    # Update SessionID
+    global CurrentSessionID
+    CurrentSessionID = JSONOutput['sessionId']
+
+    return TextResponse
