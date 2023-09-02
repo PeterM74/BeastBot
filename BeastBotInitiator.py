@@ -1,20 +1,21 @@
-import Token
+import Settings
 import discord
 from discord import app_commands
 from discord.ext import commands
+import datetime
 from Helpers.HelperFunctions import *
+
+# Initialise Session ID if using InWorld API integration
+## Leave blank as it will be overwritten on first call to API
+CurrentSessionID = ''
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
-    try:
-        # SyncSlashCommands = await bot.tree.sync()
-        # print(f"Synced {len(SyncSlashCommands)} commands")
-        print("Beasty is ready for action")
-    except Exception as e:
-        print(f"Error syncing commands: {e}")
+    print("Beasty is ready for action!")
+
 
 
 @bot.tree.command(name="chooseworkout", description="Randomly choose workout.")
@@ -34,7 +35,7 @@ async def sHelp(interaction: discord.Interaction):
 
 @bot.tree.command(name="shutdown", description="Take me down, if you can")
 async def sShutdown(interaction: discord.Interaction):
-    if str(interaction.user.id) in Token.AdminID:  # Only admin can
+    if str(interaction.user.id) in Settings.AdminID:  # Only admin can
         await interaction.response.send_message("You can't do that... I am invicib")
         fWriteToLog(str(interaction.user.id), interaction.user.name,
                     Mode="/shutdown",
@@ -52,7 +53,24 @@ async def on_message(message):
         return
 
     if fAddressesBeastBot(message.content):
-        Response = fLoadMessageResponse(message.content)
+        # Concatenate messages that are sent together in a short timespan
+        MessageHistoryObj = bot.get_channel(message.channel.id).history(limit=5)
+        MessageHistoryList = [message async for message in MessageHistoryObj]  # Last message first
+        del MessageHistoryList[0]
+
+        GroupedMessageString = message.content
+
+        for Msg in MessageHistoryList:
+            MsgTimeDelta = message.created_at - Msg.created_at
+
+            if (MsgTimeDelta.total_seconds() / 60) > 1 or Msg.author.id != message.author.id:
+                break
+            else:
+                GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString
+
+        Response = fLoadMessageResponse(GroupedMessageString,
+                                        message.author.name,
+                                        CurrentSessionID)
 
         if Response['MessageType'] == 'text':
             await message.channel.send(Response['Output'])
@@ -76,4 +94,4 @@ async def on_raw_reaction_add(payload):
     await MessageReceived.add_reaction(payload.emoji)
 
 
-bot.run(Token.BotToken)
+bot.run(Settings.BotToken)
