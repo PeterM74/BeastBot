@@ -14,7 +14,7 @@ from Helpers.LoadData import *
 MotivationFileKey = fLoadData()
 
 ##### Plain text message parser
-def fLoadMessageResponse(RawMessage, MessageAuthorName):
+def fLoadMessageResponse(RawMessage, MessageAuthorName, CurrentSessionID):
 
     # Full message
     ## TODO: optimise by generating off sentence breakdown from below
@@ -276,6 +276,13 @@ def fAddressesBeastBot(RawMessage):
 def fWriteToLog(AuthorID, AuthorName, Input = "", Mode = "", Output = ""):
     with open("Logfile.txt", "a+", encoding="utf-8") as f:
         f.write(str(AuthorID + " - " + AuthorName + " - Mode: " + Mode + " - Input: " + Input + " - Output: " + Output + "\n"))
+
+# Format individual messages for concatenation
+def fFormatMessageForConcat(MessageInput):
+    FormatMessage = MessageInput.strip()
+    FormatMessage = FormatMessage + '.' if FormatMessage and FormatMessage[-1] not in ('.', '!', '?') else FormatMessage
+
+    return(FormatMessage)
 
 # Send POST Request to InWorld API
 def fSendPOST(MessageInput, Author, SessionID):
