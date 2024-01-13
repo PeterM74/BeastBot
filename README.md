@@ -1,5 +1,5 @@
 # BeastBot <img src="Data/BeastBotNoBG.png" align="right" height="150" width="150"/>
-![](https://img.shields.io/badge/version-1.1.0-green)
+![](https://img.shields.io/badge/version-1.1.1-green)
 
 BeastBot is a [Discord](https://discord.com/) bot for our gym group. He has a range of functions, including:
 
@@ -51,7 +51,14 @@ Every time you wish to change the slash commands that BeastBot uses, you will ne
 SyncSlashCommands = await bot.tree.sync()
 ```
 
-Finally run the code in a termainl (e.g. `r python BeastBotInitiator.py`) and [invite the bot](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#creating-and-using-your-invite-link) to your server! If you see the message `Beasty is ready for action!` in your terminal, then it's working!
+Finally run the code in a terminal (e.g. `python BeastBotInitiator.py`) and [invite the bot](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#creating-and-using-your-invite-link) to your server! If you see the message `Beasty is ready for action!` in your terminal, then it's working!
+
+# LLM integration
+The bot currently supports the use of the free InWorld.ai LLM to add conversational responses to BeastBot's other functions. While it is free and can hold a conversation, it is quite repetitive in it's responses (not surprising given it's purpose as a video game integration tool). I will add the ability to alternatively use ChatGPT instead.
+
+## InWorld.ai examples
+
+<img src="Data/InWorld BeastBot Screenshot1.jpg" width="300" height="303"/><img src="Data/InWorld BeastBot Screenshot2.jpg" width="348" height="303"/>
 
 # Contributions
 If you encounter a bug or crash, please file an [issue](https://github.com/PeterM74/BeastBot/issues) with a reproducible example if possible. You may also submit requests to improve the experience through the `enhancements` tag.

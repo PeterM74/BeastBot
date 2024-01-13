@@ -238,9 +238,11 @@ def fHelp():
     "\U0001F4AA **Choose a random workout**. Give me exclusions^ and I will take them into consideration.\n" +
     "    - Example: Hey BB, choose a workout for me and exclude legs, shoulder and chest.\n\n" +
     "\U0001F4AA  **Send a motivational post**. You can ask for a specific type^.\n" +
-    "    - Example: Hey Beasty, I need motivation. It's for chest day (WIP).\n\n" +
+    "    - Example: Hey Beasty, I need motivation. \n\n" +
     "\U0001F4AA  **Recite the swole prayer**. You can ask for a recitation of the swole prayer.\n" +
     "    - Example: Hey Beasty, I would like to receive the swole prayer.\n" +
+    ("\U0001F4AA  **Chat**. You can just chat with me if you call my name.\n" +
+    "    - Example: Hey Beasty, what is a good exercise to build delts?\n" if Settings.UseInworldAIChatbot else "") +
     "\n" +
     "^ *Not available in slash commands yet.*\n\n" +
     "I'm completely natty, but don't question me; I'm always raging. Don't poke the bear. " +
