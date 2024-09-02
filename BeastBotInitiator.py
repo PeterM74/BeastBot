@@ -3,6 +3,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import datetime
+from openai import OpenAI
 from Helpers.HelperFunctions import *
 
 # Initialise Session ID if using InWorld API integration
@@ -54,7 +55,7 @@ async def on_message(message):
 
     if fAddressesBeastBot(message.content):
         # Concatenate messages that are sent together in a short timespan
-        MessageHistoryObj = bot.get_channel(message.channel.id).history(limit=5)
+        MessageHistoryObj = bot.get_channel(message.channel.id).history(limit=10)
         MessageHistoryList = [message async for message in MessageHistoryObj]  # Last message first
         del MessageHistoryList[0]
 
@@ -63,7 +64,7 @@ async def on_message(message):
         for Msg in MessageHistoryList:
             MsgTimeDelta = message.created_at - Msg.created_at
 
-            if (MsgTimeDelta.total_seconds() / 60) > 1 or Msg.author.id != message.author.id:
+            if (MsgTimeDelta.total_seconds() / 600) > 1 or Msg.author.id != message.author.id:
                 break
             else:
                 GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString

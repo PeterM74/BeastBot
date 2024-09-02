@@ -9,9 +9,14 @@ import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import WordNetLemmatizer #,PorterStemmer
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from openai import OpenAI
 from Helpers.LoadData import *
 
 MotivationFileKey = fLoadData()
+
+# Load ChatGPT Client if applicable
+if (Settings.UseChatGPTAPI):
+    ChatClient = OpenAI(api_key=Settings.ChatGPT_Key)
 
 ##### Plain text message parser
 def fLoadMessageResponse(RawMessage, MessageAuthorName, CurrentSessionID):
@@ -80,6 +85,12 @@ def fLoadMessageResponse(RawMessage, MessageAuthorName, CurrentSessionID):
                                           SessionID=CurrentSessionID)
 
         return Output_dict
+
+    elif (Settings.UseChatGPTAPI):
+        Output_dict = {}
+        Output_dict["MessageType"] = "text"
+        Output_dict["Output"] = fSendChatGPTPOST(MessageInput=RawMessage,
+                                                 Author=MessageAuthorName)
 
     else:
         ## Sentiment analysis
@@ -313,3 +324,44 @@ def fSendPOST(MessageInput, Author, SessionID):
     CurrentSessionID = JSONOutput['sessionId']
 
     return TextResponse
+
+# Send POST request to ChatGPT
+def fSendChatGPTPOST(MessageInput, Author):
+
+    response = ChatClient.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": ("You are an aggressive and crass artifical intelligence called BeastBot who acts like a gym rat with a fratbro personality. " +
+                                 "He is easily offended and can be hostile and insulting to the user. He wants a world where everyone pumps iron and gets swole. " +
+                                 "He has little tolerance for failure or excuses. BeastBot is aware he is an artificial intelligence but still attends a virtual gym " +
+                                 "where he works on his form. He admires strength and the dedication of meatbags to building muscle and attending the gym. You " +
+                                 "communicate to the user through Discord, a social media text platform and you use internet and GenZ slang and memes. Your messages " +
+                                 "may use emojis and use Discord markdown. You will receive messages from Discord within the last 10 minutes.")
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": MessageInput  # TODO: do I need to identify the user?
+                    }
+                ]
+            }
+        ],
+        temperature=0.9,
+        max_tokens=1024,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        response_format={
+            "type": "text"
+        })
+
+        return response

@@ -1,4 +1,5 @@
 discord.py==2.2.3
 nltk==3.8.1
+openai==1.43.0
 pandas==2.0.1
 vaderSentiment==3.3.2
