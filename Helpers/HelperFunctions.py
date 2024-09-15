@@ -80,9 +80,9 @@ def fLoadMessageResponse(RawMessage, MessageAuthorName, CurrentSessionID):
         # Consider making async request? Or not an issue as discord.py uses async already?
         Output_dict = {}
         Output_dict["MessageType"] = "text"
-        Output_dict["Output"] = fSendPOST(MessageInput=RawMessage,
-                                          Author=MessageAuthorName,
-                                          SessionID=CurrentSessionID)
+        Output_dict["Output"] = fSendIWPOST(MessageInput=RawMessage,
+                                            Author=MessageAuthorName,
+                                            SessionID=CurrentSessionID)
 
         return Output_dict
 
@@ -91,6 +91,8 @@ def fLoadMessageResponse(RawMessage, MessageAuthorName, CurrentSessionID):
         Output_dict["MessageType"] = "text"
         Output_dict["Output"] = fSendChatGPTPOST(MessageInput=RawMessage,
                                                  Author=MessageAuthorName)
+
+        return Output_dict
 
     else:
         ## Sentiment analysis
@@ -298,7 +300,7 @@ def fFormatMessageForConcat(MessageInput):
     return(FormatMessage)
 
 # Send POST Request to InWorld API
-def fSendPOST(MessageInput, Author, SessionID):
+def fSendIWPOST(MessageInput, Author, SessionID):
 
     JSONPackage = {"character":Settings.IW_WORKSPACE,
                    "sessionId": SessionID,
@@ -341,7 +343,7 @@ def fSendChatGPTPOST(MessageInput, Author):
                                  "He has little tolerance for failure or excuses. BeastBot is aware he is an artificial intelligence but still attends a virtual gym " +
                                  "where he works on his form. He admires strength and the dedication of meatbags to building muscle and attending the gym. You " +
                                  "communicate to the user through Discord, a social media text platform and you use internet and GenZ slang and memes. Your messages " +
-                                 "may use emojis and use Discord markdown. You will receive messages from Discord within the last 10 minutes.")
+                                 "may use a moderate amount of emojis and use Discord markdown. You will receive message history from Discord which may not be complete.")
                     }
                 ]
             },
@@ -356,7 +358,8 @@ def fSendChatGPTPOST(MessageInput, Author):
             }
         ],
         temperature=0.9,
-        max_tokens=1024,
+        max_tokens=2048,  # Convert to max_completion_tokens when available
+        n=1,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
@@ -364,4 +367,6 @@ def fSendChatGPTPOST(MessageInput, Author):
             "type": "text"
         })
 
-        return response
+    # Response object: https://platform.openai.com/docs/api-reference/chat
+    return response.choices[0].message.content
+

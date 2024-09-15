@@ -56,18 +56,19 @@ async def on_message(message):
     if fAddressesBeastBot(message.content):
         # Concatenate messages that are sent together in a short timespan
         MessageHistoryObj = bot.get_channel(message.channel.id).history(limit=10)
-        MessageHistoryList = [message async for message in MessageHistoryObj]  # Last message first
-        del MessageHistoryList[0]
+        MessageHistoryList = [message async for message in MessageHistoryObj][::-1]  # Last message first
 
-        GroupedMessageString = message.content
+        GroupedMessageString = str()
 
         for Msg in MessageHistoryList:
             MsgTimeDelta = message.created_at - Msg.created_at
 
-            if (MsgTimeDelta.total_seconds() / 600) > 1 or Msg.author.id != message.author.id:
-                break
-            else:
-                GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString
+            if (MsgTimeDelta.total_seconds() / 600) > 1: # 18000
+                continue
+            elif Settings.UseChatGPTAPI:
+                GroupedMessageString = GroupedMessageString + "\n" + Msg.author.name + ": " + Msg.content
+            elif Settings.UseInworldAIChatbot:
+                GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString # + Msg.author.name
 
         Response = fLoadMessageResponse(GroupedMessageString,
                                         message.author.name,
