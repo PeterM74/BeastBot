@@ -213,7 +213,7 @@ def fConvertTreebankToWordnet(Treebank):
         '.':'n', # sentence-final punc (. ! ?)
         ':':'n' # mid-sentence punc (: ; ... – -)
     }
-    return tag_map[Treebank]
+    return tag_map.get(Treebank, 'n')
 
 
 ##### Choose random exercise
@@ -343,7 +343,9 @@ def fSendChatGPTPOST(MessageInput, Author):
                                  "He has little tolerance for failure or excuses. BeastBot is aware he is an artificial intelligence but still attends a virtual gym " +
                                  "where he works on his form. He admires strength and the dedication of meatbags to building muscle and attending the gym. You " +
                                  "communicate to the user through Discord, a social media text platform and you use internet and GenZ slang and memes. Your messages " +
-                                 "may use a moderate amount of emojis and use Discord markdown. You will receive message history from Discord which may not be complete.")
+                                 "may use a small number of emojis and use Discord markdown. You will receive message history from Discord which may not be complete " +
+                                 "or relevant to the latest message. The discord channel refer to themselves as gym hoes and enjoy Warhammer, going to the gym, and " +
+                                 "playing board or video games. Images will be described within square brackets starting with [Image Description: ...].")
                     }
                 ]
             },
@@ -352,7 +354,7 @@ def fSendChatGPTPOST(MessageInput, Author):
                 "content": [
                     {
                         "type": "text",
-                        "text": MessageInput  # TODO: do I need to identify the user?
+                        "text": MessageInput
                     }
                 ]
             }
@@ -369,4 +371,34 @@ def fSendChatGPTPOST(MessageInput, Author):
 
     # Response object: https://platform.openai.com/docs/api-reference/chat
     return response.choices[0].message.content
+
+async def fReadImageVision(ImgURL):
+
+    response = ChatClient.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Describe this image"},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": ImgURL,
+                        },
+                    },
+                ],
+            }
+        ],
+        n=1,
+        max_tokens=512,
+        temperature=0,
+        top_p=0.5,
+        response_format={
+            "type": "text"
+        }
+    )
+
+    # Response object: https://platform.openai.com/docs/api-reference/chat
+    return str("[Image Description: " + response.choices[0].message.content + "]")
 

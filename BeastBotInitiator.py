@@ -63,13 +63,22 @@ async def on_message(message):
         for Msg in MessageHistoryList:
             MsgTimeDelta = message.created_at - Msg.created_at
 
-            if (MsgTimeDelta.total_seconds() / 600) > 1: # 18000
+            if (MsgTimeDelta.total_seconds() / 18000) > 1:
                 continue
             elif Settings.UseChatGPTAPI:
+                # Send to vision for reading if image
+                AttachmentDescriptions = str()
+                for attachment in Msg.attachments:
+                    if attachment.content_type.startswith('image'):
+                        temp_response = await fReadImageVision(attachment.url)
+                        AttachmentDescriptions = AttachmentDescriptions + "\n" + temp_response
+                        del temp_response
+                        GroupedMessageString = GroupedMessageString + "\n" + Msg.author.name + ": " + AttachmentDescriptions
                 GroupedMessageString = GroupedMessageString + "\n" + Msg.author.name + ": " + Msg.content
             elif Settings.UseInworldAIChatbot:
                 GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString # + Msg.author.name
 
+        print(GroupedMessageString) #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
         Response = fLoadMessageResponse(GroupedMessageString,
                                         message.author.name,
                                         CurrentSessionID)
