@@ -17,6 +17,8 @@ MotivationFileKey = fLoadData()
 # Load ChatGPT Client if applicable
 if (Settings.UseChatGPTAPI):
     ChatClient = OpenAI(api_key=Settings.ChatGPT_Key)
+    global GlobalImgSet
+    GlobalImgSet = {}
 
 ##### Plain text message parser
 def fLoadMessageResponse(RawMessage, MessageAuthorName, CurrentSessionID):
@@ -373,6 +375,10 @@ def fSendChatGPTPOST(MessageInput, Author):
     return response.choices[0].message.content
 
 async def fReadImageVision(ImgURL):
+    global GlobalImgSet
+
+    if ImgURL in GlobalImgSet:
+        return "[Image Description: " + GlobalImgSet[ImgURL] + "]"
 
     response = ChatClient.chat.completions.create(
         model="gpt-4o-mini",
@@ -398,6 +404,8 @@ async def fReadImageVision(ImgURL):
             "type": "text"
         }
     )
+
+    GlobalImgSet[ImgURL] = response.choices[0].message.content
 
     # Response object: https://platform.openai.com/docs/api-reference/chat
     return str("[Image Description: " + response.choices[0].message.content + "]")

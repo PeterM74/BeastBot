@@ -78,7 +78,6 @@ async def on_message(message):
             elif Settings.UseInworldAIChatbot:
                 GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString # + Msg.author.name
 
-        print(GroupedMessageString) #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
         Response = fLoadMessageResponse(GroupedMessageString,
                                         message.author.name,
                                         CurrentSessionID)
