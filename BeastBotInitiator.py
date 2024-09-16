@@ -27,6 +27,16 @@ async def sChooseWorkout(interaction: discord.Interaction):
                 Mode = "/chooseworkout",
                 Output = ExerciseOutput)
 
+@bot.tree.command(name="generateimage", description="Generate an image by description.")
+async def sGenerateImage(interaction: discord.Interaction, description: str):
+    # ExerciseOutput = fChooseExercise()
+    # await interaction.response.send_message(str("Hell yeah! Let's do " + ExerciseOutput.lower() + " today."))
+    ResponseURL = await fRequestDALLE(description)
+    await interaction.response.send_message(ResponseURL)
+    fWriteToLog(str(interaction.user.id), interaction.user.name,
+                Mode = "/generateimage",
+                Output = ResponseURL)
+
 @bot.tree.command(name="help", description="I'll spot you, just ask \U0001F4AA")
 async def sHelp(interaction: discord.Interaction):
     await interaction.response.send_message(fHelp(), ephemeral=True)

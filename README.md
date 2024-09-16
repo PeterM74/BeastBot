@@ -6,7 +6,7 @@ BeastBot is a [Discord](https://discord.com/) bot for our gym group. He has a ra
 * Providing motivation images (silly AI-generated memes)
 * Choosing a random workout and allow for exclusions if you want to skip leg day
 * Will react to messages (based on other user's reactions)
-* Optional integration with [InWorld.ai](https://inworld.ai/) or [OpenAI](https://platform.openai.com/) large language models (LLMs) to create dynamic and flexible in-character responses (with OpenAI option able to interpret and generate images sent/requested by the user), *OR*
+* Optional integration with [InWorld.ai](https://inworld.ai/) or [OpenAI](https://platform.openai.com/) large language models (LLMs) to create dynamic and flexible in-character responses (with OpenAI option able to interpret user images and generate images of it's own through DALL-E), *OR*
 * Very basic and limited compliment/insult system based on sentiment analysis
 
 Best of all, he will stay out of your way unless you invoke one of his aliases in chat. Be aware that he can be rude and may not be appropriate for users <18.

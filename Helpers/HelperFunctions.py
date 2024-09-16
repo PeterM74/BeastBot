@@ -271,8 +271,10 @@ def fHelp():
     "    - Example: Hey Beasty, I need motivation. \n\n" +
     "\U0001F4AA  **Recite the swole prayer**. You can ask for a recitation of the swole prayer.\n" +
     "    - Example: Hey Beasty, I would like to receive the swole prayer.\n" +
-    ("\U0001F4AA  **Chat**. You can just chat with me if you call my name.\n" +
-    "    - Example: Hey Beasty, what is a good exercise to build delts?\n" if Settings.UseInworldAIChatbot else "") +
+    "\U0001F4AA  **Chat**. You can just chat with me if you call my name.\n" +
+    "    - Example: Hey Beasty, what is a good exercise to build delts?\n" +
+    "\U0001F4AA  **Image generation**. You can ask me to generate an image to get you in the mood to lift.\n" +
+    "    - Example: Hey Beasty, draw me an image of buffy the vampire slayer as a weightlifter\n" +
     "\n" +
     "^ *Not available in slash commands yet.*\n\n" +
     "I'm completely natty, but don't question me; I'm always raging. Don't poke the bear. " +
