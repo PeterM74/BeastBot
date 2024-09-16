@@ -74,13 +74,14 @@ async def on_message(message):
                         AttachmentDescriptions = AttachmentDescriptions + "\n" + temp_response
                         del temp_response
                         GroupedMessageString = GroupedMessageString + "\n" + Msg.author.name + ": " + AttachmentDescriptions
-                GroupedMessageString = GroupedMessageString + "\n" + Msg.author.name + ": " + Msg.content
+                GroupedMessageString = GroupedMessageString + "\n" + Msg.author.name + ": " + Msg.content + "."
             elif Settings.UseInworldAIChatbot:
                 GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString # + Msg.author.name
 
-        Response = fLoadMessageResponse(GroupedMessageString,
-                                        message.author.name,
-                                        CurrentSessionID)
+        Response = await fLoadMessageResponse(message.content,
+                                              GroupedMessageString,
+                                              message.author.name,
+                                              CurrentSessionID)
 
         if Response['MessageType'] == 'text':
             await message.channel.send(Response['Output'])

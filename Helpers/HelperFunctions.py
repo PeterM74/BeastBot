@@ -1,6 +1,10 @@
+import string
+
 import Settings
 import random
 import discord
+import string
+import re
 import requests
 import pandas as pd
 from discord import app_commands
@@ -21,7 +25,7 @@ if (Settings.UseChatGPTAPI):
     GlobalImgSet = {}
 
 ##### Plain text message parser
-def fLoadMessageResponse(RawMessage, MessageAuthorName, CurrentSessionID):
+async def fLoadMessageResponse(RawMessage, MsgHistory, MessageAuthorName, CurrentSessionID):
 
     # Full message
     ## TODO: optimise by generating off sentence breakdown from below
@@ -78,20 +82,31 @@ def fLoadMessageResponse(RawMessage, MessageAuthorName, CurrentSessionID):
 
         return Output_dict
 
+
     if (Settings.UseInworldAIChatbot):
         # Consider making async request? Or not an issue as discord.py uses async already?
         Output_dict = {}
         Output_dict["MessageType"] = "text"
-        Output_dict["Output"] = fSendIWPOST(MessageInput=RawMessage,
+        Output_dict["Output"] = fSendIWPOST(MessageInput=MsgHistory,
                                             Author=MessageAuthorName,
                                             SessionID=CurrentSessionID)
+
+        return Output_dict
+
+    elif (Settings.UseChatGPTAPI & fMatchDrawRequest(ResponseNLP)):
+        # Remove greetings but otherwise keep as is
+        Filtered_RawMessage = re.sub(r'\b(' + '|'.join(map(re.escape, ['beasty', 'beastbot', 'hey', 'hi'])) + r')\b',
+                                     '', RawMessage, flags=re.IGNORECASE).strip().strip(string.punctuation).strip()
+        Output_dict = {}
+        Output_dict["MessageType"] = "text"
+        Output_dict["Output"] = await fRequestDALLE(Filtered_RawMessage)
 
         return Output_dict
 
     elif (Settings.UseChatGPTAPI):
         Output_dict = {}
         Output_dict["MessageType"] = "text"
-        Output_dict["Output"] = fSendChatGPTPOST(MessageInput=RawMessage,
+        Output_dict["Output"] = fSendChatGPTPOST(MessageInput=MsgHistory,
                                                  Author=MessageAuthorName)
 
         return Output_dict
@@ -410,3 +425,19 @@ async def fReadImageVision(ImgURL):
     # Response object: https://platform.openai.com/docs/api-reference/chat
     return str("[Image Description: " + response.choices[0].message.content + "]")
 
+def fMatchDrawRequest(NLP):
+    first_3_words = NLP['LMessage'].split()[:3]
+    logical = 'draw me' in NLP['LMessage'] or 'draw us' in NLP['LMessage'] or \
+              'imagine' in first_3_words or \
+              'render' in first_3_words
+    return logical
+async def fRequestDALLE(request):
+    response = ChatClient.images.generate(
+        model="dall-e-3",
+        prompt=request,
+        size="1024x1024",
+        quality="hd",
+        n=1,
+    )
+
+    return str(response.data[0].url)
