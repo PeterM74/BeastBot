@@ -1,5 +1,5 @@
 import string
-
+import asyncio
 import Settings
 import random
 import discord
@@ -29,7 +29,7 @@ async def fLoadMessageResponse(RawMessage, MsgHistory, MessageAuthorName, Curren
 
     # Full message
     ## TODO: optimise by generating off sentence breakdown from below
-    ResponseNLP = fParseResponseThroughNLP(RawMessage)
+    ResponseNLP = await asyncio.to_thread(fParseResponseThroughNLP, RawMessage)
 
     # Message by sentence
     ResponseSentenceNLP = []
