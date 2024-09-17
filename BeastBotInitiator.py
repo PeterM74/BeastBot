@@ -16,47 +16,33 @@ bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
     print("Beasty is ready for action!")
-
+    # SyncSlashCommands = await bot.tree.sync()
 
 
 @bot.tree.command(name="chooseworkout", description="Randomly choose workout.")
 async def sChooseWorkout(interaction: discord.Interaction):
     ExerciseOutput = fChooseExercise()
     await interaction.response.send_message(str("Hell yeah! Let's do " + ExerciseOutput.lower() + " today."))
-    fWriteToLog(str(interaction.user.id), interaction.user.name,
-                Mode = "/chooseworkout",
-                Output = ExerciseOutput)
 
 @bot.tree.command(name="generateimage", description="Generate an image by description.")
 async def sGenerateImage(interaction: discord.Interaction, description: str):
-    # ExerciseOutput = fChooseExercise()
-    # await interaction.response.send_message(str("Hell yeah! Let's do " + ExerciseOutput.lower() + " today."))
+    # There is 3s response time before timeout
+    await interaction.response.defer()
     ResponseURL = await fRequestDALLE(description)
-    await interaction.response.send_message(ResponseURL)
-    fWriteToLog(str(interaction.user.id), interaction.user.name,
-                Mode = "/generateimage",
-                Output = ResponseURL)
+    # await interaction.response.send_message(ResponseURL)
+    await interaction.followup.send(content=ResponseURL)
 
 @bot.tree.command(name="help", description="I'll spot you, just ask \U0001F4AA")
 async def sHelp(interaction: discord.Interaction):
     await interaction.response.send_message(fHelp(), ephemeral=True)
-    fWriteToLog(str(interaction.user.id), interaction.user.name,
-                Mode="/help",
-                Output="Helpinfo")
 
 @bot.tree.command(name="shutdown", description="Take me down, if you can")
 async def sShutdown(interaction: discord.Interaction):
     if str(interaction.user.id) in Settings.AdminID:  # Only admin can
         await interaction.response.send_message("You can't do that... I am invicib")
-        fWriteToLog(str(interaction.user.id), interaction.user.name,
-                    Mode="/shutdown",
-                    Output="Success")
         await bot.close()
     else:
         await interaction.response.send_message("I'm sorry Dave, I'm afraid I can't do that")
-        fWriteToLog(str(interaction.user.id), interaction.user.name,
-                    Mode="/shutdown",
-                    Output="Failure")
 
 @bot.event
 async def on_message(message):
@@ -95,16 +81,8 @@ async def on_message(message):
 
         if Response['MessageType'] == 'text':
             await message.channel.send(Response['Output'])
-            fWriteToLog(str(message.author.id), message.author.name,
-                        Input = message.content,
-                        Mode="Plaintext",
-                        Output=Response['Output'])
         elif Response['MessageType'] == 'image':
             await message.channel.send(file=discord.File(Response['Output']))
-            fWriteToLog(str(message.author.id), message.author.name,
-                        Input=message.content,
-                        Mode="Image",
-                        Output=Response['Output'])
 
 @bot.event
 async def on_raw_reaction_add(payload):
