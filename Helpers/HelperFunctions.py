@@ -349,6 +349,7 @@ def fSendIWPOST(MessageInput, Author, SessionID):
 # Send POST request to ChatGPT
 def fSendChatGPTPOST(MessageInput, Author):
 
+    print(MessageInput)
     response = ChatClient.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -433,6 +434,7 @@ def fMatchDrawRequest(NLP):
               'imagine' in first_3_words or \
               'render' in first_3_words
     return logical
+
 async def fRequestDALLE(request):
     response = ChatClient.images.generate(
         model="dall-e-3",
