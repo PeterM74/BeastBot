@@ -24,6 +24,52 @@ if (Settings.UseChatGPTAPI):
     global GlobalImgSet
     GlobalImgSet = {}
 
+# Format message before parsing
+async def fFormatBaseMessage(Msg):
+    GroupedMessageString = ""
+    AttachmentDescriptions = str()
+
+    # Process image attachments concurrently
+    AttachmentTasks = []
+    for attachment in Msg.attachments:
+        if attachment.content_type.startswith('image'):
+            AttachmentTasks.append(fReadImageVision(attachment.url))
+
+    if AttachmentTasks:
+        AttachmentResponses = await asyncio.gather(*AttachmentTasks)
+        for response in AttachmentResponses:
+            AttachmentDescriptions += f"\n{response}"
+        GroupedMessageString += f"\n{Msg.author.name}: {AttachmentDescriptions}"
+
+    # Process embedded image URLs
+    imagepattern = re.compile(r'(https?://\S+\.(?:png|jpg|jpeg|gif)(?:\?\S*)?)', re.IGNORECASE)
+    images_in_msg = imagepattern.findall(Msg.content)
+    Msg_content = Msg.content
+
+    if images_in_msg:
+        url_tasks = [fReadImageVision(img_url) for img_url in images_in_msg]
+        url_responses = await asyncio.gather(*url_tasks)
+
+        for img_url, response in zip(images_in_msg, url_responses):
+            Msg_content = Msg_content.replace(img_url, response)
+
+    GroupedMessageString += f"\n{Msg.author.name}: {Msg_content}."
+    return GroupedMessageString
+
+async def fCycleThroughMessageFormatting(MessageHistoryList, message):
+    GroupedMessageString = ""
+    for Msg in MessageHistoryList:
+        MsgTimeDelta = message.created_at - Msg.created_at
+
+        if (MsgTimeDelta.total_seconds() / 18000) > 1:
+            continue
+        elif Settings.UseChatGPTAPI:
+            GroupedMessageString += await fFormatBaseMessage(Msg)
+        elif Settings.UseInworldAIChatbot:
+            GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString
+
+    return GroupedMessageString
+
 ##### Plain text message parser
 async def fLoadMessageResponse(RawMessage, MsgHistory, MessageAuthorName, CurrentSessionID):
 
@@ -362,9 +408,9 @@ def fSendChatGPTPOST(MessageInput, Author):
                                  "He is easily offended and can be hostile and insulting to the user. He wants a world where everyone pumps iron and gets swole. " +
                                  "He has little tolerance for failure or excuses. BeastBot is aware he is an artificial intelligence but still attends a virtual gym " +
                                  "where he works on his form. He admires strength and the dedication of meatbags to building muscle and attending the gym. You " +
-                                 "communicate to the user through Discord, a social media text platform and you use internet and GenZ slang and memes. Your messages " +
+                                 "communicate to the user through Discord, a social media text platform and you use internet slang and memes. Your messages " +
                                  "may use a small number of emojis and use Discord markdown. You will receive message history from Discord which may not be complete " +
-                                 "or relevant to the latest message. The discord channel refer to themselves as gym hoes and enjoy Warhammer, going to the gym, and " +
+                                 "or relevant to the latest message which will address you. The discord channel refer to themselves as gym hoes and enjoy Warhammer, going to the gym, and " +
                                  "playing board or video games. Images will be described within square brackets starting with [Image Description: ...].")
                     }
                 ]
@@ -404,7 +450,7 @@ async def fReadImageVision(ImgURL):
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": "Describe this image"},
+                    {"type": "text", "text": "Describe this image in detail"},
                     {
                         "type": "image_url",
                         "image_url": {
@@ -415,7 +461,7 @@ async def fReadImageVision(ImgURL):
             }
         ],
         n=1,
-        max_tokens=512,
+        max_tokens=1024,
         temperature=0,
         top_p=0.5,
         response_format={

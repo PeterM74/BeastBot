@@ -3,6 +3,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import datetime
+import asyncio
 from openai import OpenAI
 from Helpers.HelperFunctions import *
 
@@ -54,34 +55,7 @@ async def on_message(message):
         MessageHistoryObj = bot.get_channel(message.channel.id).history(limit=10)
         MessageHistoryList = [message async for message in MessageHistoryObj][::-1]  # Last message first
 
-        GroupedMessageString = str()
-
-        for Msg in MessageHistoryList:
-            MsgTimeDelta = message.created_at - Msg.created_at
-
-            if (MsgTimeDelta.total_seconds() / 18000) > 1:
-                continue
-            elif Settings.UseChatGPTAPI:
-                # Send to vision for reading if image attachment
-                AttachmentDescriptions = str()
-                for attachment in Msg.attachments:
-                    if attachment.content_type.startswith('image'):
-                        temp_response = await fReadImageVision(attachment.url)
-                        AttachmentDescriptions = AttachmentDescriptions + "\n" + temp_response
-                        del temp_response
-                        GroupedMessageString = GroupedMessageString + "\n" + Msg.author.name + ": " + AttachmentDescriptions
-                # Check for embedded image URLs as sometimes pasted as URL and interpreted as image
-                imagepattern = re.compile(r'(https?://\S+\.(?:png|jpg|jpeg|gif)(?:\?\S*)?)', re.IGNORECASE)
-                images_in_msg = imagepattern.findall(Msg.content)
-                Msg_content = Msg.content
-                for img_url in images_in_msg:
-                    temp_response = await fReadImageVision(img_url)
-                    Msg_content = Msg_content.replace(img_url, temp_response)
-                    del temp_response
-
-                GroupedMessageString = GroupedMessageString + "\n" + Msg.author.name + ": " + Msg_content + "."
-            elif Settings.UseInworldAIChatbot:
-                GroupedMessageString = fFormatMessageForConcat(Msg.content) + GroupedMessageString # + Msg.author.name
+        GroupedMessageString = await fCycleThroughMessageFormatting(MessageHistoryList, message)
 
         Response = await fLoadMessageResponse(message.content, # Does this need to be run through Vision too?
                                               GroupedMessageString,
