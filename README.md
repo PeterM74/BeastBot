@@ -1,12 +1,12 @@
 # BeastBot <img src="Data/BeastBotNoBG.png" align="right" height="150" width="150"/>
-![](https://img.shields.io/badge/version-1.1.1-green)
+![](https://img.shields.io/badge/version-1.2.0-green)
 
 BeastBot is a [Discord](https://discord.com/) bot for our gym group. He has a range of functions, including:
 
 * Providing motivation images (silly AI-generated memes)
 * Choosing a random workout and allow for exclusions if you want to skip leg day
 * Will react to messages (based on other user's reactions)
-* Optional integration with [InWorld.ai](https://inworld.ai/) large language model to create dynamic and flexible in-character responses, *OR*
+* Optional integration with [InWorld.ai](https://inworld.ai/) or [OpenAI](https://platform.openai.com/) large language models (LLMs) to create dynamic and flexible in-character responses (with OpenAI option able to interpret user images and generate images of it's own through DALL-E), *OR*
 * Very basic and limited compliment/insult system based on sentiment analysis
 
 Best of all, he will stay out of your way unless you invoke one of his aliases in chat. Be aware that he can be rude and may not be appropriate for users <18.
@@ -16,7 +16,10 @@ Feel free to fork and host your own BeastBot. I am currently running him on a Ra
 
 Firstly, fork and clone this repo onto your hosting platform. Next, you will need to generate a discord bot token - best to follow [this guide](https://discordpy.readthedocs.io/en/stable/discord.html).
 
-Next, create an InWorld.ai character (optional - leave `UseInworldAIChatbot = False` if not). This is free provided you don't exceed 5000 API calls per month (very generous for a small-medium sized group) and is very simple to set up. Follow the instructions to generate your character, [source the API key](https://docs.inworld.ai/docs/tutorial-api/getting-started#authorization-signature) and workspace ID (by clicking on the 'More' option for your character). A character sheet is available in this repo if you wish to copy the options used for this project or feel free to make your own.
+Next, if you wish to integrate an LLM for more natural responses:
+
+* Create an InWorld.ai character (optional - leave `UseInworldAIChatbot = False` if not). This used to be free provided you don't exceed 5000 API calls per month and is very simple to set up, however they have now implemented a mandatory pricing system. Follow the instructions to generate your character, [source the API key](https://docs.inworld.ai/docs/tutorial-api/getting-started#authorization-signature) and workspace ID (by clicking on the 'More' option for your character). A character sheet is available in this repo if you wish to copy the options used for this project or feel free to make your own.
+* Create an [OpenAI developer account](https://platform.openai.com/), load money onto your profile and generate an API key.
 
 Take all these settings and create a `Settings.py` file in the root directory of the project with the following contents:
 
@@ -29,6 +32,9 @@ UseInworldAIChatbot = True  # Optional - set to false
 IW_WORKSPACE = 'workspaces/{WORKSPACE_ID}/characters/{CHARACTER_NAME}'
 IW_APIURL = 'https://studio.inworld.ai/v1/' + IW_WORKSPACE + ':simpleSendText'
 IW_APIKEYAuth = 'Basic {API_KEY_HERE}'
+# ChatGPT API settings
+UseChatGPTAPI = True  # Optional - set to false
+ChatGPT_Key = '{API_KEY_HERE}'
 ```
 
 You will then need to install [Python](https://www.python.org/downloads/) and pip (usually comes packaged with Python). You will also need the libraries specified in `requirements.txt`. Run the `requirements.txt` file in the console:
@@ -54,9 +60,15 @@ SyncSlashCommands = await bot.tree.sync()
 Finally run the code in a terminal (e.g. `python BeastBotInitiator.py`) and [invite the bot](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#creating-and-using-your-invite-link) to your server! If you see the message `Beasty is ready for action!` in your terminal, then it's working!
 
 # LLM integration
-The bot currently supports the use of the free InWorld.ai LLM to add conversational responses to BeastBot's other functions. While it is free and can hold a conversation, it is quite repetitive in it's responses (not surprising given it's purpose as a video game integration tool). I will add the ability to alternatively use ChatGPT instead.
+The bot currently supports the use of the InWorld.ai or OpenAI LLM to add conversational responses to BeastBot's other functions. 
+
+## ChatGPT examples
+The testing of ChatGPT is ongoing but is performing well. ChatGPT implementation supports text interaction, image understanding and image generation. See below example.
+
+<img src="Data/ChatGPT Vision.jpg" width="540" height="660"/>
 
 ## InWorld.ai examples
+InWorld.ai supports text interaction but is quite stale and repetitive in responses but performs adequately.
 
 <img src="Data/InWorld BeastBot Screenshot1.jpg" width="300" height="303"/><img src="Data/InWorld BeastBot Screenshot2.jpg" width="348" height="303"/>
 
