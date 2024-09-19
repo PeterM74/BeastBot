@@ -62,7 +62,13 @@ Finally run the code in a terminal (e.g. `python BeastBotInitiator.py`) and [inv
 # LLM integration
 The bot currently supports the use of the InWorld.ai or OpenAI LLM to add conversational responses to BeastBot's other functions. 
 
+## ChatGPT examples
+The testing of ChatGPT is ongoing but is performing well. ChatGPT implementation supports text interaction, image understanding and image generation. See below example.
+
+<img src="Data/ChatGPT Vision.jpg" width="540" height="660"/>
+
 ## InWorld.ai examples
+InWorld.ai supports text interaction but is quite stale and repetitive in responses but performs adequately.
 
 <img src="Data/InWorld BeastBot Screenshot1.jpg" width="300" height="303"/><img src="Data/InWorld BeastBot Screenshot2.jpg" width="348" height="303"/>
 

@@ -19,7 +19,6 @@ async def on_ready():
     print("Beasty is ready for action!")
     # SyncSlashCommands = await bot.tree.sync()
 
-
 @bot.tree.command(name="chooseworkout", description="Randomly choose workout.")
 async def sChooseWorkout(interaction: discord.Interaction):
     ExerciseOutput = fChooseExercise()
