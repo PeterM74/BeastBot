@@ -478,6 +478,7 @@ async def fReadImageVision(ImgURL):
 def fMatchDrawRequest(NLP):
     first_3_words = NLP['LMessage'].split()[:3]
     logical = 'draw me' in NLP['LMessage'] or 'draw us' in NLP['LMessage'] or \
+              'draw for me' in NLP['LMessage'] or 'draw for us' in NLP['LMessage'] or \
               'imagine' in first_3_words or \
               'render' in first_3_words
     return logical
