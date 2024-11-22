@@ -324,8 +324,8 @@ def fHelp():
     "\n" +
     "^ *Not available in slash commands yet.*\n\n" +
     "I'm completely natty, but don't question me; I'm always raging. Don't poke the bear. " +
-    "Even a gigachad like me needs to rest to upgrade, so I will be unavailable between " +
-    "3-3:30AM AEDT. If you would like to help me grow stronger, please contribute at " +
+    "Even a gigachad like me needs to rest to upgrade, so I will be unavailable Sundays between " +
+    "3-3:10AM AEDT. If you would like to help me grow stronger, please contribute at " +
     "https://github.com/PeterM74/BeastBot. Happy farming.")
 
     return ReturnString

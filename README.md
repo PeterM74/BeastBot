@@ -1,5 +1,5 @@
 # BeastBot <img src="Data/BeastBotNoBG.png" align="right" height="150" width="150"/>
-![](https://img.shields.io/badge/version-1.2.1-green)
+![](https://img.shields.io/badge/version-1.2.2-green)
 
 BeastBot is a [Discord](https://discord.com/) bot for our gym group. He has a range of functions, including:
 
@@ -58,6 +58,19 @@ SyncSlashCommands = await bot.tree.sync()
 ```
 
 Finally run the code in a terminal (e.g. `python BeastBotInitiator.py`) and [invite the bot](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#creating-and-using-your-invite-link) to your server! If you see the message `Beasty is ready for action!` in your terminal, then it's working!
+
+## CI/CD
+Add the `CI-CDProcess.py` as a cronjob. This will stop the client, pull the latest remote version and re-initiate the bot. For instance, to run this process every 3AM on a Sunday, enter the code below into crontab. Choose a time and frequency that suits your project activity.
+
+```
+0 3 * * 0 /usr/bin/python3 /path/to/BeastBot/CI-CDProcess.py >> /path/to/BeastBot/CICD.log 2>&1
+```
+
+Make sure the file has executable privileges:
+
+```bash
+chmod +x update_and_restart.py
+```
 
 # LLM integration
 The bot currently supports the use of the InWorld.ai or OpenAI LLM to add conversational responses to BeastBot's other functions. 
