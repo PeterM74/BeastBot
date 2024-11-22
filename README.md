@@ -1,5 +1,5 @@
 # BeastBot <img src="Data/BeastBotNoBG.png" align="right" height="150" width="150"/>
-![](https://img.shields.io/badge/version-1.2.1-green)
+![](https://img.shields.io/badge/version-1.2.2-green)
 
 BeastBot is a [Discord](https://discord.com/) bot for our gym group. He has a range of functions, including:
 
@@ -59,11 +59,24 @@ SyncSlashCommands = await bot.tree.sync()
 
 Finally run the code in a terminal (e.g. `python BeastBotInitiator.py`) and [invite the bot](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#creating-and-using-your-invite-link) to your server! If you see the message `Beasty is ready for action!` in your terminal, then it's working!
 
+## CI/CD
+While you can manually pull and launch the bot as described above, I have included a script that will interrupt, pull latest changes and re-deploy the bot on a regular schedule. To do this, add the `CI-CDProcess.py` as a cronjob. This will stop the client, pull the latest remote version and re-initiate the bot. For instance, to run this process every 3AM on a Sunday, enter the code below into crontab. Choose a time and frequency that suits your project activity.
+
+```
+0 3 * * 0 /usr/bin/python3 /path/to/BeastBot/CI-CDProcess.py >> /path/to/BeastBot/CICD.log 2>&1
+```
+
+Make sure the file has executable privileges (when in the root directory):
+
+```bash
+chmod +x CI-CDProcess.py
+```
+
 # LLM integration
 The bot currently supports the use of the InWorld.ai or OpenAI LLM to add conversational responses to BeastBot's other functions. 
 
 ## ChatGPT examples
-The testing of ChatGPT is ongoing but is performing well. ChatGPT implementation supports text interaction, image understanding and image generation. See below example.
+The testing of ChatGPT is ongoing but is performing well. ChatGPT implementation supports text interaction, image comprehension and image generation. See below example.
 
 <img src="Data/ChatGPT Vision.jpg" width="540" height="660"/>
 
