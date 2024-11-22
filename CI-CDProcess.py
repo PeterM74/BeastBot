@@ -16,4 +16,4 @@ except subprocess.CalledProcessError as e:
 subprocess.run(["git", "pull", "origin", "main"])
 
 # Restart BeastBot
-subprocess.run(["python", "BeastBotInitiator.py"]) # You may need python3
+subprocess.Popen(["python", "BeastBotInitiator.py"], start_new_session=True) # You may need python3
