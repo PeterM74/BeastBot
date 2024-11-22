@@ -63,7 +63,7 @@ Finally run the code in a terminal (e.g. `python BeastBotInitiator.py`) and [inv
 While you can manually pull and launch the bot as described above, I have included a script that will interrupt, pull latest changes and re-deploy the bot on a regular schedule. To do this, add the `CI-CDProcess.py` as a cronjob. This will stop the client, pull the latest remote version and re-initiate the bot. For instance, to run this process every 3AM on a Sunday, enter the code below into crontab. Choose a time and frequency that suits your project activity.
 
 ```
-0 3 * * 0 /usr/bin/python3 /path/to/BeastBot/CI-CDProcess.py >> /path/to/BeastBot/CICD.log 2>&1
+0 3 * * 0 cd /path/to/BeastBot && /usr/bin/python CI-CDProcess.py >> /path/to/BeastBot/CICD.log 2>&1
 ```
 
 Make sure the file has executable privileges (when in the root directory):
