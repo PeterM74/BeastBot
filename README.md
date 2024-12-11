@@ -1,5 +1,5 @@
 # BeastBot <img src="Data/BeastBotNoBG.png" align="right" height="150" width="150"/>
-![](https://img.shields.io/badge/version-1.2.2-green)
+![](https://img.shields.io/badge/version-1.2.3-green)
 
 BeastBot is a [Discord](https://discord.com/) bot for our gym group. He has a range of functions, including:
 
@@ -64,6 +64,7 @@ While you can manually pull and launch the bot as described above, I have includ
 
 ```
 0 3 * * 0 cd /path/to/BeastBot && /usr/bin/python CI-CDProcess.py >> /path/to/BeastBot/CICD.log 2>&1
+@reboot cd /path/to/BeastBot && /usr/bin/python CI-CDProcess.py >> /path/to/BeastBot/CICD.log 2>&1
 ```
 
 Make sure the file has executable privileges (when in the root directory):
