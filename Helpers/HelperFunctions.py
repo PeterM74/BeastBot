@@ -6,6 +6,7 @@ import discord
 import string
 import re
 import requests
+import base64
 import pandas as pd
 from discord import app_commands
 from discord.ext import commands
@@ -144,8 +145,13 @@ async def fLoadMessageResponse(RawMessage, MsgHistory, MessageAuthorName, Curren
         Filtered_RawMessage = re.sub(r'\b(' + '|'.join(map(re.escape, ['beasty', 'beastbot', 'hey', 'hi'])) + r')\b',
                                      '', RawMessage, flags=re.IGNORECASE).strip().strip(string.punctuation).strip()
         Output_dict = {}
-        Output_dict["MessageType"] = "text"
-        Output_dict["Output"] = await fRequestDALLE(Filtered_RawMessage)
+
+        # Use below for DALL-E
+        # Output_dict["MessageType"] = "text"
+        # Output_dict["Output"] = await fRequestDALLE(Filtered_RawMessage)
+
+        Output_dict["MessageType"] = "embedImg"
+        Output_dict["Output"] = await fRequestGPT40Image(Filtered_RawMessage)
 
         return Output_dict
 
@@ -488,8 +494,23 @@ async def fRequestDALLE(request):
         model="dall-e-3",
         prompt=request,
         size="1024x1024",
-        quality="hd",
+        quality="high",
         n=1,
     )
 
     return str(response.data[0].url)
+
+async def fRequestGPT40Image(request):
+    response = ChatClient.images.generate(
+        model="gpt-image-1",
+        prompt=request,
+        response_format='b64_json',
+        size="auto",
+        quality="high",
+        n=1,
+    )
+
+    b64Obj = response.data[0].b64_json
+    ImgBytes = base64.b64decode(image_base64)
+
+    return ImgBytes

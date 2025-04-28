@@ -4,6 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 import datetime
 import asyncio
+import io
 from openai import OpenAI
 from Helpers.HelperFunctions import *
 
@@ -65,6 +66,9 @@ async def on_message(message):
             await message.channel.send(Response['Output'])
         elif Response['MessageType'] == 'image':
             await message.channel.send(file=discord.File(Response['Output']))
+        elif Response['MessageType'] == 'embedImg':
+            temp_file = discord.File(io.BytesIO(Response['Output']))
+            await message.channel.send(file = temp_file)
 
 @bot.event
 async def on_raw_reaction_add(payload):
