@@ -57,7 +57,7 @@ async def on_message(message):
 
         GroupedMessageString = await fCycleThroughMessageFormatting(MessageHistoryList, message)
 
-        Response = await fLoadMessageResponse(message.content, # Does this need to be run through Vision too?
+        Response = await fLoadMessageResponse(message.content,
                                               GroupedMessageString,
                                               message.author.name,
                                               CurrentSessionID)

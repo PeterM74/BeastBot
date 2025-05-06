@@ -504,7 +504,6 @@ async def fRequestGPT40Image(request):
     response = ChatClient.images.generate(
         model="gpt-image-1",
         prompt=request,
-        response_format='b64_json',
         size="auto",
         quality="high",
         n=1,
